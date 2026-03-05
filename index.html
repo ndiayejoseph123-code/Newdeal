@@ -488,32 +488,30 @@
         return;
       }
 
-      const entry = githubCodes[code];
+      // Format GitHub simple : { "FICHE-XXXX": 10, ... }
+      // Si le code est présent = valide et disponible
+      // Si absent = invalide ou déjà supprimé par l'admin après utilisation
+      const credits = githubCodes[code];
 
-      if (!entry) {
-        alert('❌ Code invalide. Vérifiez le code ou contactez l\'administrateur via WhatsApp.');
-        return;
-      }
-
-      if (entry.used) {
-        alert('❌ Ce code a déjà été utilisé. Chaque code est à usage unique.');
+      if (!credits) {
+        alert('❌ Code invalide ou déjà utilisé.\nContactez l\'administrateur via WhatsApp si vous pensez que c\'est une erreur.');
         return;
       }
 
       // Code valide ! Ajouter les crédits
       const current = parseInt(localStorage.getItem('paidCredits') || '0');
-      localStorage.setItem('paidCredits', current + entry.credits);
+      localStorage.setItem('paidCredits', current + credits);
 
       // Mémoriser localement pour éviter double usage sur le même appareil
       localUsed.push(code);
       localStorage.setItem('localUsedCodes', JSON.stringify(localUsed));
 
-      // Invalider le cache pour la prochaine vérification
+      // Vider le cache
       githubCodesCache = null;
 
       document.getElementById('rechargeCodeInput').value = '';
       updateCreditUI();
-      alert('✅ ' + entry.credits + ' fiches ajoutées à votre compte !');
+      alert('✅ ' + credits + ' fiches ajoutées à votre compte !');
     }
 
     function enterApp() {
